@@ -30,6 +30,9 @@ bool TensorUtils::regionIsFull(Tensor* input) {
     }
     int regionSize = 0;
     for (auto& region : des->regions) {
+        if (region.offset != nullptr) {
+            return false;
+        }
         regionSize += region.size[1] * region.size[0] * region.size[2];
     }
     return regionSize == size;
@@ -373,6 +376,9 @@ static inline bool expandSrc(std::vector<int>& src, std::vector<int>& dst, std::
 
 // fuse srcRegion and dstRegion to dstRegion if return true
 bool TensorUtils::fuseRegion(Tensor::InsideDescribe::Region& srcReg, Tensor::InsideDescribe::Region& dstReg) {
+    if (srcReg.offset != nullptr || dstReg.offset != nullptr) {
+        return false;
+    }
     // src data isnot full data of dst
     if (srcReg.dst.offset > dstReg.src.offset) {
         return false;
@@ -500,6 +506,21 @@ void TensorUtils::adjustTensorForCompability(Tensor* newTensor) {
             newTensor->setLength(n, 1);
         }
     }
+}
+
+Tensor::DimensionType TensorUtils::getDimType(const Tensor* t) {
+    auto format = TensorUtils::getDescribe(t)->dimensionFormat;
+    switch (format) {
+        case MNN_DATA_FORMAT_NCHW:
+            return Tensor::CAFFE;
+        case MNN_DATA_FORMAT_NC4HW4:
+            return Tensor::CAFFE_C4;
+        case MNN_DATA_FORMAT_NHWC:
+            return Tensor::TENSORFLOW;
+        default:
+            break;
+    }
+    return Tensor::TENSORFLOW;
 }
 
 } // namespace MNN

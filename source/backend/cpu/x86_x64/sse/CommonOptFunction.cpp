@@ -88,7 +88,7 @@ void _SSE_MNNAddC4WithStride(const float* source, float* dest, size_t srcStride,
 void _SSE_MNNReluWithSlopeChannel(float* dst, const float* src, const float* slope, size_t sizeQuad, size_t depthQuad) {
     auto zero = _mm_set1_ps(0.0f);
     for (int j = 0; j < depthQuad; j++) {
-        auto slopeZ       = _mm_loadu_ps(slope);
+        auto slopeZ       = _mm_loadu_ps(slope + 4 * j);
         const float* srcZ = src + 4 * j * sizeQuad;
         float* dstZ       = dst + 4 * j * sizeQuad;
         for (int i = 0; i < sizeQuad; i++) {
@@ -670,7 +670,7 @@ void _SSE_MNNComputeMatMulForE_1(const float* A, const float* B, float* C, const
             }
             _mm_storeu_ps(C + 4 * y, sumValue);
         }
-        for (int y=hR; y<h; y+=numberThread) {
+        for (int y=hR + tId; y<h; y+=numberThread) {
             auto bs = B + y;
             float sumValue = 0.0f;
             if (biasPtr != nullptr) {

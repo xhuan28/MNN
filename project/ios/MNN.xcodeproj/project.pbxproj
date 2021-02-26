@@ -208,6 +208,7 @@
 		48A8A61A21D101DE00C2B9A7 /* Matrix_CV.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48A8A61721D101DD00C2B9A7 /* Matrix_CV.cpp */; };
 		48BB6EF025220A930056E195 /* MNNTranspose32Bit4x4.S in Sources */ = {isa = PBXBuildFile; fileRef = 48BB6EEF25220A930056E195 /* MNNTranspose32Bit4x4.S */; };
 		48BB6EF625220AA80056E195 /* MNNTranspose32Bit4x4.S in Sources */ = {isa = PBXBuildFile; fileRef = 48BB6EF525220AA80056E195 /* MNNTranspose32Bit4x4.S */; };
+		48BFC50125B84D2700580F9E /* GeometryGather.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48BFC50025B84D2700580F9E /* GeometryGather.cpp */; };
 		48C84B6C250F709E00EE7666 /* SizeComputer.hpp in Headers */ = {isa = PBXBuildFile; fileRef = 48C84B6A250F709E00EE7666 /* SizeComputer.hpp */; };
 		48C84B6D250F709E00EE7666 /* SizeComputer.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48C84B6B250F709E00EE7666 /* SizeComputer.cpp */; };
 		48C84B80250F711700EE7666 /* Distributions.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 48C84B6E250F711600EE7666 /* Distributions.cpp */; };
@@ -941,6 +942,7 @@
 		48A8A61721D101DD00C2B9A7 /* Matrix_CV.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Matrix_CV.cpp; sourceTree = "<group>"; };
 		48BB6EEF25220A930056E195 /* MNNTranspose32Bit4x4.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = MNNTranspose32Bit4x4.S; sourceTree = "<group>"; };
 		48BB6EF525220AA80056E195 /* MNNTranspose32Bit4x4.S */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.asm; path = MNNTranspose32Bit4x4.S; sourceTree = "<group>"; };
+		48BFC50025B84D2700580F9E /* GeometryGather.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = GeometryGather.cpp; sourceTree = "<group>"; };
 		48C84B6A250F709E00EE7666 /* SizeComputer.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = SizeComputer.hpp; sourceTree = "<group>"; };
 		48C84B6B250F709E00EE7666 /* SizeComputer.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = SizeComputer.cpp; sourceTree = "<group>"; };
 		48C84B6E250F711600EE7666 /* Distributions.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Distributions.cpp; sourceTree = "<group>"; };
@@ -1418,8 +1420,6 @@
 		92FF04A123AA0BFB00AC97F6 /* Pipeline.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Pipeline.cpp; sourceTree = "<group>"; };
 		92FF04A223AA0BFB00AC97F6 /* Session.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = Session.hpp; sourceTree = "<group>"; };
 		92FF04A323AA0BFB00AC97F6 /* Session.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Session.cpp; sourceTree = "<group>"; };
-		9BF7EFE525A58FF6007DB207 /* Arm82Binary.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; name = Arm82Binary.hpp; path = ../arm82/Arm82Binary.hpp; sourceTree = "<group>"; };
-		9BF7EFE625A58FF7007DB207 /* Arm82Binary.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; name = Arm82Binary.cpp; path = ../arm82/Arm82Binary.cpp; sourceTree = "<group>"; };
 		C43C81D52518944F00A0FF84 /* ConvInt83x3.hpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.h; path = ConvInt83x3.hpp; sourceTree = "<group>"; };
 		C43C81D62518944F00A0FF84 /* ConvInt83x3.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = ConvInt83x3.cpp; sourceTree = "<group>"; };
 		C43C81D72518944F00A0FF84 /* WinogradHelper.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = WinogradHelper.cpp; sourceTree = "<group>"; };
@@ -1597,6 +1597,7 @@
 		48747D51245D9E33000B9709 /* geometry */ = {
 			isa = PBXGroup;
 			children = (
+				48BFC50025B84D2700580F9E /* GeometryGather.cpp */,
 				481FA84E259C27B30047F01F /* GeometryTensorArray.cpp */,
 				48608B4D250632EC00CB1D71 /* GeometryComputer.cpp */,
 				48608B50250632EC00CB1D71 /* GeometryComputer.hpp */,
@@ -1903,8 +1904,6 @@
 		489404DC24A2F4BB001E456C /* Recovered References */ = {
 			isa = PBXGroup;
 			children = (
-				9BF7EFE625A58FF7007DB207 /* Arm82Binary.cpp */,
-				9BF7EFE525A58FF6007DB207 /* Arm82Binary.hpp */,
 			);
 			name = "Recovered References";
 			sourceTree = "<group>";
@@ -2963,6 +2962,7 @@
 				489D7A872550FDC900AD896A /* MetalOPRegister.mm in Sources */,
 				92FF032B23AA0B5A00AC97F6 /* MNNGemmFloatOne_4.S in Sources */,
 				48FB9DC724A848D0008E1A2D /* MNNPackedMatMul.S in Sources */,
+				48BFC50125B84D2700580F9E /* GeometryGather.cpp in Sources */,
 				48FB9DC824A848D0008E1A2D /* MNNPackC4ForMatMul_A.S in Sources */,
 				92FF02A223AA0B5A00AC97F6 /* CPUSize.cpp in Sources */,
 				48C84B6D250F709E00EE7666 /* SizeComputer.cpp in Sources */,

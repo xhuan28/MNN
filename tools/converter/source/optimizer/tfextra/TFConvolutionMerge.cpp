@@ -52,40 +52,58 @@ public:
         auto weight           = inputs[1];
         auto weightInfo       = weight->getInfo();
         auto weightTensorData = weight->readMap<float>();
-        if (!weightInfo || !weightTensorData) {
-            MNN_ERROR("For %s convolution weight is not const\n", expr->name().c_str());
-            return nullptr;
-        }
-
         std::unique_ptr<Convolution2DT> convolution2D(new MNN::Convolution2DT);
-        int kh           = weightInfo->dim[0];
-        int kw           = weightInfo->dim[1];
-        int num_input    = weightInfo->dim[2];
-        int num_output   = weightInfo->dim[3];
-        weight           = _Transpose(weight, {3, 2, 0, 1});
-        weightInfo       = weight->getInfo();
-        weightTensorData = weight->readMap<float>();
-        convolution2D->bias.resize(num_output);
-        std::fill(convolution2D->bias.begin(), convolution2D->bias.end(), 0.0f);
-
-        convolution2D->weight.resize(weightInfo->size);
-        ::memcpy(convolution2D->weight.data(), weightTensorData, weightInfo->size * sizeof(float));
         convolution2D->common.reset(new MNN::Convolution2DCommonT);
         auto common = convolution2D->common.get();
-
         common->relu        = false;
         common->group       = 1;
-        common->outputCount = num_output;
-        common->inputCount  = num_input;
-        common->kernelX     = kw;
-        common->kernelY     = kh;
         common->padX        = 0;
         common->padY        = 0;
+        common->outputCount = 0;
 
         bool success = _writeCommonAttr(common, op->main_as_Extra(), op->name()->str());
         if (!success) {
             return nullptr;
         }
+        if (!weightInfo || !weightTensorData) {
+            std::unique_ptr<OpT> newOp(new OpT);
+            newOp->name       = expr->name();
+            newOp->type       = OpType_Convolution;
+            newOp->main.type  = OpParameter_Convolution2D;
+            newOp->main.value = convolution2D.release();
+            // Turn weight to NCHW
+            inputs[1]         = _Transpose(inputs[1], {3, 2, 0, 1});
+            auto newExpr      = Expr::create(newOp.get(), inputs, 1);
+            return newExpr;
+        }
+        int kh           = weightInfo->dim[0];
+        int kw           = weightInfo->dim[1];
+        int num_input    = weightInfo->dim[2];
+        int weight_input = weightInfo->dim[2];
+        common->kernelX     = kw;
+        common->kernelY     = kh;
+        auto src = inputs[0];
+        auto srcInfo = src->getInfo();
+        if (nullptr != srcInfo && srcInfo->dim.size() > 0) {
+            if (NHWC == srcInfo->order) {
+                num_input = srcInfo->dim[(int)srcInfo->dim.size() - 1];
+            } else {
+                num_input = srcInfo->dim[1];
+            }
+        }
+        int num_output   = weightInfo->dim[3];
+        common->outputCount = num_output;
+        common->inputCount  = num_input;
+        if (0 != weight_input) {
+            common->group   = num_input / weight_input;
+        }
+        weight           = _Transpose(weight, {3, 2, 0, 1});
+        weightInfo       = weight->getInfo();
+        weightTensorData = weight->readMap<float>();
+        convolution2D->bias.resize(num_output);
+        std::fill(convolution2D->bias.begin(), convolution2D->bias.end(), 0.0f);
+        convolution2D->weight.resize(weightInfo->size);
+        ::memcpy(convolution2D->weight.data(), weightTensorData, weightInfo->size * sizeof(float));
         std::unique_ptr<OpT> newOp(new OpT);
         newOp->name       = expr->name();
         newOp->type       = OpType_Convolution;
