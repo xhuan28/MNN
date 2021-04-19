@@ -43,14 +43,14 @@ ErrorCode NPUActivation::onResize(const std::vector<Tensor *> &inputs, const std
 
         (*prelu)
             .set_input_x(*xOp.get()).set_input_weight(mConst_w);
-        mNpuBackend->setOutputOps(mOp, {prelu});
+        mNpuBackend->setOutputOps(mOp, {prelu}, outputs);
     }else{
         shared_ptr<ge::op::Activation> relu(new ge::op::Activation(opName + "_relu"));
         (*relu)
             .set_input_x(*xOp.get())
             .set_attr_coef(.000000) 
             .set_attr_mode(mType);
-        mNpuBackend->setOutputOps(mOp, {relu});
+        mNpuBackend->setOutputOps(mOp, {relu}, outputs);
     }
 
 

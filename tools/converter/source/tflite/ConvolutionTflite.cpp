@@ -219,9 +219,9 @@ void TransposeConvTflite::run(MNN::OpT *dstOp, const std::unique_ptr<tflite::Ope
     
     DCHECK(!quantizedModel) << "TransposeConv not support quantized model";
     
-    // 3|2 inputs: input tensor, weight, (bias)
+    // 3|4 inputs: output shape, weight, input tensor, (bias)
     const int inputSize = tfliteOp->inputs.size();
-    DCHECK(inputSize == 2 || inputSize == 3) << "tflite Conv2D input ERROR! ";
+    DCHECK(inputSize == 3 || inputSize == 4) << "tflite Conv2D input ERROR! ";
     /*
      enum Padding : byte { SAME, VALID }
      table TransposeConvOptions {
@@ -248,11 +248,11 @@ void TransposeConvTflite::run(MNN::OpT *dstOp, const std::unique_ptr<tflite::Ope
         std::vector<float> weightData;
         weightData.resize(weightSize);
         auto originalWeightPtr = reinterpret_cast<const float*>(tfliteModelBuffer[weightTensor->buffer]->data.data());
-        convertDataFormatTflite(originalWeightPtr, weightData.data(), kh, kw, ci, co);
+        convertDataFormatTflite(originalWeightPtr, weightData.data(), kh, kw, ci, co, true);
         convolution2DFloat->weight = weightData;
         // bias
         std::vector<float> biasData(co, 0.0f);
-        if (inputSize == 3) {
+        if (inputSize == 4) {
             const auto& biasTensor = tfliteTensors[tfliteOp->inputs[2]];
             auto biasDataPtr       = reinterpret_cast<const float*>(tfliteModelBuffer[biasTensor->buffer]->data.data());
             if(biasDataPtr){
@@ -277,20 +277,18 @@ void TransposeConvTflite::run(MNN::OpT *dstOp, const std::unique_ptr<tflite::Ope
         common->strideX     = tfliteConvOption->stride_w;
         common->strideY     = tfliteConvOption->stride_h;
         common->padMode     = MNN::PadMode_SAME;
-        if (tfliteConvOption->padding == tflite::Padding_VALID) {
-            common->padMode = MNN::PadMode_VALID;
-        }
+        common->hasOutputShape = true;
 
         dstOp->main.value = convolution2DFloat;
     }
     
     // set input output index
-    dstOp->inputIndexes.resize(1);
+    dstOp->inputIndexes.resize(2);
     dstOp->outputIndexes.resize(1);
 
-    dstOp->inputIndexes[0]  = tfliteOp->inputs[0];
+    dstOp->inputIndexes[0]  = tfliteOp->inputs[2];
+    dstOp->inputIndexes[1]  = tfliteOp->inputs[0];
     dstOp->outputIndexes[0] = tfliteOp->outputs[0];
-    
 }
 
 

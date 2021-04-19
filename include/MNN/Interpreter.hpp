@@ -25,8 +25,11 @@ struct ScheduleConfig {
     std::vector<std::string> saveTensors;
     /** forward type */
     MNNForwardType type = MNN_FORWARD_CPU;
-    /** number of threads in parallel */
-    int numThread = 4;
+    /** CPU:number of threads in parallel , Or GPU: mode setting*/
+    union {
+        int numThread = 4;
+        int mode;
+    };
 
     /** subpath to run */
     struct Path {
@@ -44,7 +47,7 @@ struct ScheduleConfig {
             Op = 0,
 
             /**
-             * Tensor Mode (NOT supported yet)
+             * Tensor Mode
              * - inputs means the inputs tensors, can NOT be empty.
              * - outputs means the outputs tensors, can NOT be empty.
              * It will find the pipeline that compute outputs from inputs.
